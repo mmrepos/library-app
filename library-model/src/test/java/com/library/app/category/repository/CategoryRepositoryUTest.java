@@ -6,43 +6,32 @@ import static org.junit.Assert.*;
 
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.library.app.category.model.Category;
-import com.library.app.commontests.utils.DBCommandTransactionalExecutor;
+import com.library.app.commontests.utils.TestBaseRepository;
 
-public class CategoryRepositoryUTest {
-	private EntityManagerFactory emf;
-	private EntityManager em;
+public class CategoryRepositoryUTest extends TestBaseRepository {
 	private CategoryRepository categoryRepository;
-	private DBCommandTransactionalExecutor dBCommandTransactionalExecutor;
 
 	@Before
 	public void initTestCase() {
-		emf = Persistence.createEntityManagerFactory("libraryPU");
-		em = emf.createEntityManager();
+		initializeTestDB();
 
 		categoryRepository = new CategoryRepository();
 		categoryRepository.em = em;
-
-		dBCommandTransactionalExecutor = new DBCommandTransactionalExecutor(em);
 	}
 
 	@After
-	public void closeEntityManager() {
-		em.close();
-		emf.close();
+	public void setDownTestCase() {
+		closeEntityManager();
 	}
 
 	@Test
 	public void addCategoryAndFindIt() {
-		final Long categoryAddedId = dBCommandTransactionalExecutor.executeCommand(() -> {
+		final Long categoryAddedId = dbCommandExecutor.executeCommand(() -> {
 			return categoryRepository.add(java()).getId();
 		});
 
@@ -67,7 +56,7 @@ public class CategoryRepositoryUTest {
 
 	@Test
 	public void updateCategory() {
-		final Long categoryAddedId = dBCommandTransactionalExecutor.executeCommand(() -> {
+		final Long categoryAddedId = dbCommandExecutor.executeCommand(() -> {
 			return categoryRepository.add(java()).getId();
 		});
 
@@ -75,7 +64,7 @@ public class CategoryRepositoryUTest {
 		assertThat(categoryAfterAdd.getName(), is(equalTo(java().getName())));
 
 		categoryAfterAdd.setName(cleanCode().getName());
-		dBCommandTransactionalExecutor.executeCommand(() -> {
+		dbCommandExecutor.executeCommand(() -> {
 			categoryRepository.update(categoryAfterAdd);
 			return null;
 		});
@@ -86,7 +75,7 @@ public class CategoryRepositoryUTest {
 
 	@Test
 	public void findAllCategories() {
-		dBCommandTransactionalExecutor.executeCommand(() -> {
+		dbCommandExecutor.executeCommand(() -> {
 			allCategories().forEach(categoryRepository::add);
 			return null;
 		});
@@ -101,7 +90,7 @@ public class CategoryRepositoryUTest {
 
 	@Test
 	public void alreadyExistsForAdd() {
-		dBCommandTransactionalExecutor.executeCommand(() -> {
+		dbCommandExecutor.executeCommand(() -> {
 			categoryRepository.add(java());
 			return null;
 		});
@@ -112,7 +101,7 @@ public class CategoryRepositoryUTest {
 
 	@Test
 	public void alreadyExistsCategoryWithId() {
-		final Category java = dBCommandTransactionalExecutor.executeCommand(() -> {
+		final Category java = dbCommandExecutor.executeCommand(() -> {
 			categoryRepository.add(cleanCode());
 			return categoryRepository.add(java());
 		});
@@ -128,7 +117,7 @@ public class CategoryRepositoryUTest {
 
 	@Test
 	public void existsById() {
-		final Long categoryAddedId = dBCommandTransactionalExecutor.executeCommand(() -> {
+		final Long categoryAddedId = dbCommandExecutor.executeCommand(() -> {
 			return categoryRepository.add(java()).getId();
 		});
 
