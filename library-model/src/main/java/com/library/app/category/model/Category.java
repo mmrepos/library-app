@@ -8,11 +8,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 @Entity
-@Table(name = "lib_category")
+@Table(name = "category")
 public class Category implements Serializable {
 	private static final long serialVersionUID = 2657551019023598969L;
 
@@ -20,15 +18,13 @@ public class Category implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@NotNull
-	@Size(min = 2, max = 25)
 	@Column(unique = true)
 	private String name;
 
 	public Category() {
 	}
 
-	public Category(String name) {
+	public Category(final String name) {
 		this.name = name;
 	}
 
@@ -36,7 +32,7 @@ public class Category implements Serializable {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(final Long id) {
 		this.id = id;
 	}
 
@@ -44,7 +40,7 @@ public class Category implements Serializable {
 		return name;
 	}
 
-	public void setName(String name) {
+	public void setName(final String name) {
 		this.name = name;
 	}
 
@@ -58,14 +54,14 @@ public class Category implements Serializable {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 		if (this == obj)
 			return true;
 		if (obj == null)
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Category other = (Category) obj;
+		final Category other = (Category) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;
